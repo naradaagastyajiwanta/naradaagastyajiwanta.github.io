@@ -1,15 +1,30 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import LanguageSwitcher from "@/components/language-switcher"
 import { useLanguage } from "@/contexts/language-context"
 import { translations } from "@/lib/translations"
+import { Menu, X } from "lucide-react"
 
 export default function Header() {
   const { language } = useLanguage()
   const t = translations[language]
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const menuItems = [
+    { href: "/#work", label: t.work },
+    { href: "/#shorts", label: t.shorts },
+    { href: "/#about", label: t.about },
+    { href: "/blog", label: t.blog },
+    { href: "/#contact", label: t.contact },
+  ]
 
   return (
     <motion.header
@@ -39,14 +54,10 @@ export default function Header() {
             </motion.span>
           </Link>
         </motion.div>
-        <nav className="hidden md:flex gap-6">
-          {[
-            { href: "/#work", label: t.work },
-            { href: "/#shorts", label: t.shorts },
-            { href: "/#about", label: t.about },
-            { href: "/blog", label: t.blog },
-            { href: "/#contact", label: t.contact },
-          ].map((item, index) => (
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-6">
+          {menuItems.map((item, index) => (
             <motion.div
               key={item.href}
               initial={{ opacity: 0, y: -20 }}
@@ -63,51 +74,74 @@ export default function Header() {
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
             <LanguageSwitcher />
           </motion.div>
-        </nav>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button
-            className="hidden md:flex bg-white text-blue-500 hover:bg-blue-50"
-            onClick={() => {
-              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
-            }}
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            {t.letsTalk}
-          </Button>
-        </motion.div>
-        <motion.div
-          className="md:hidden"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.5 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button variant="outline" size="icon" className="border-white text-white hover:bg-blue-400/20">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-6 w-6"
+            <Button
+              className="bg-white text-blue-500 hover:bg-blue-50"
+              onClick={() => {
+                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+              }}
             >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
-            </svg>
-          </Button>
-        </motion.div>
+              {t.letsTalk}
+            </Button>
+          </motion.div>
+        </nav>
+
+        {/* Mobile Menu Button */}
+        <div className="flex items-center gap-2 md:hidden">
+          <LanguageSwitcher />
+
+          <motion.button
+            className="text-white p-1 rounded-md"
+            onClick={toggleMobileMenu}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </motion.button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            className="md:hidden bg-blue-500 border-t border-blue-400/50"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="container py-4 flex flex-col gap-4">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-white font-medium py-2 hover:text-blue-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <Button
+                className="bg-white text-blue-500 hover:bg-blue-50 w-full mt-2"
+                onClick={() => {
+                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+                  setMobileMenuOpen(false)
+                }}
+              >
+                {t.letsTalk}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   )
 }
