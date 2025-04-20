@@ -1,13 +1,14 @@
 import { Suspense } from "react"
 import Link from "next/link"
-import { PlusCircle, Edit, Trash2, Eye, Info } from "lucide-react"
+import { PlusCircle, Edit, Eye, Info } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import AdminHeader from "@/components/admin-header"
 import ProtectedRoute from "@/components/protected-route"
 import FallbackImage from "@/components/fallback-image"
-import { getAllPosts, deletePost } from "@/lib/actions/blog-actions"
+import DeletePostButton from "@/components/delete-post-button"
+import { getAllPosts } from "@/lib/actions/blog-actions"
 
 function AdminDashboard() {
   return (
@@ -120,36 +121,17 @@ async function BlogPostsList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end gap-2">
-                      <form>
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/blog/${post.slug}`}>
-                            <Eye className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </form>
-                      <form>
-                        <Button variant="ghost" size="sm" asChild>
-                          <Link href={`/admin/editor/${post.id}`}>
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                      </form>
-                      <form
-                        action={async () => {
-                          if (confirm("Are you sure you want to delete this post?")) {
-                            await deletePost(post.id)
-                          }
-                        }}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          type="submit"
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </form>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/blog/${post.slug}`}>
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/editor/${post.id}`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <DeletePostButton postId={post.id} />
                     </div>
                   </td>
                 </tr>
