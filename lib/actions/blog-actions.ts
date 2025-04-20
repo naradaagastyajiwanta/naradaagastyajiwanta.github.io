@@ -74,93 +74,108 @@ export async function getPostById(id: number): Promise<BlogPost | null> {
 
 // Create a new blog post
 export async function createPost(post: BlogPostInput): Promise<BlogPost> {
-  const slug = generateSlug(post.title)
-  const readTime = calculateReadTime(post.content)
-  const excerpt = post.excerpt || post.content.substring(0, 150) + "..."
+  try {
+    const slug = generateSlug(post.title)
+    const readTime = calculateReadTime(post.content)
+    const excerpt = post.excerpt || post.content.substring(0, 150) + "..."
 
-  const result = await sql<BlogPost[]>`
-    INSERT INTO blog_posts (
-      title, slug, content, excerpt, cover_image, 
-      author, category, status, read_time
-    ) VALUES (
-      ${post.title}, ${slug}, ${post.content}, ${excerpt}, ${post.cover_image || null}, 
-      ${post.author}, ${post.category}, ${post.status}, ${readTime}
-    )
-    RETURNING *
-  `
+    // Gunakan parameter binding untuk menghindari masalah SQL injection dan escape karakter
+    const result = await sql<BlogPost[]>`
+      INSERT INTO blog_posts (
+        title, slug, content, excerpt, cover_image, 
+        author, category, status, read_time
+      ) VALUES (
+        ${post.title}, ${slug}, ${post.content}, ${excerpt}, ${post.cover_image || null}, 
+        ${post.author}, ${post.category}, ${post.status}, ${readTime}
+      )
+      RETURNING *
+    `
 
-  revalidatePath("/blog")
-  revalidatePath("/admin")
+    revalidatePath("/blog")
+    revalidatePath("/admin")
 
-  return result[0]
+    return result[0]
+  } catch (error) {
+    console.error("Error creating blog post:", error)
+    throw new Error(`Failed to create blog post: ${error instanceof Error ? error.message : String(error)}`)
+  }
 }
 
 // Update an existing blog post
 export async function updatePost(id: number, post: Partial<BlogPostInput>): Promise<BlogPost | null> {
-  // First get the existing post
-  const existingPost = await getPostById(id)
-  if (!existingPost) return null
+  try {
+    // First get the existing post
+    const existingPost = await getPostById(id)
+    if (!existingPost) return null
 
-  // Prepare update fields
-  const updates: Record<string, any> = {}
-  let newSlug = existingPost.slug
+    // Prepare update fields
+    let newSlug = existingPost.slug
+    let newReadTime = existingPost.read_time
+    let newExcerpt = existingPost.excerpt
 
-  if (post.title && post.title !== existingPost.title) {
-    updates.title = post.title
-    newSlug = generateSlug(post.title)
-    updates.slug = newSlug
-  }
-
-  if (post.content && post.content !== existingPost.content) {
-    updates.content = post.content
-    updates.read_time = calculateReadTime(post.content)
-
-    // Update excerpt if not explicitly provided
-    if (!post.excerpt && (!existingPost.excerpt || existingPost.excerpt.includes("..."))) {
-      updates.excerpt = post.content.substring(0, 150) + "..."
+    if (post.title && post.title !== existingPost.title) {
+      newSlug = generateSlug(post.title)
     }
+
+    if (post.content && post.content !== existingPost.content) {
+      newReadTime = calculateReadTime(post.content)
+
+      // Update excerpt if not explicitly provided
+      if (!post.excerpt && (!existingPost.excerpt || existingPost.excerpt.includes("..."))) {
+        newExcerpt = post.content.substring(0, 150) + "..."
+      }
+    }
+
+    if (post.excerpt) {
+      newExcerpt = post.excerpt
+    }
+
+    // Gunakan parameter binding untuk menghindari masalah SQL injection dan escape karakter
+    const result = await sql<BlogPost[]>`
+      UPDATE blog_posts
+      SET 
+        title = ${post.title || existingPost.title},
+        slug = ${newSlug},
+        content = ${post.content || existingPost.content},
+        excerpt = ${newExcerpt},
+        cover_image = ${post.cover_image !== undefined ? post.cover_image : existingPost.cover_image},
+        author = ${post.author || existingPost.author},
+        category = ${post.category || existingPost.category},
+        status = ${post.status || existingPost.status},
+        read_time = ${newReadTime},
+        updated_at = NOW()
+      WHERE id = ${id}
+      RETURNING *
+    `
+
+    revalidatePath("/blog")
+    revalidatePath(`/blog/${newSlug}`)
+    revalidatePath("/admin")
+
+    return result.length > 0 ? result[0] : null
+  } catch (error) {
+    console.error("Error updating blog post:", error)
+    throw new Error(`Failed to update blog post: ${error instanceof Error ? error.message : String(error)}`)
   }
-
-  if (post.excerpt) updates.excerpt = post.excerpt
-  if (post.cover_image !== undefined) updates.cover_image = post.cover_image || null
-  if (post.author) updates.author = post.author
-  if (post.category) updates.category = post.category
-  if (post.status) updates.status = post.status
-
-  updates.updated_at = new Date()
-
-  // Build the SQL query dynamically
-  const setClause = Object.entries(updates)
-    .map(([key, value]) => `${key} = ${value === null ? "NULL" : `'${value}'`}`)
-    .join(", ")
-
-  // Execute the update
-  const result = await sql<BlogPost[]>`
-    UPDATE blog_posts
-    SET ${sql.raw(setClause)}
-    WHERE id = ${id}
-    RETURNING *
-  `
-
-  revalidatePath("/blog")
-  revalidatePath(`/blog/${newSlug}`)
-  revalidatePath("/admin")
-
-  return result.length > 0 ? result[0] : null
 }
 
 // Delete a blog post
 export async function deletePost(id: number): Promise<boolean> {
-  const result = await sql`
-    DELETE FROM blog_posts
-    WHERE id = ${id}
-    RETURNING id
-  `
+  try {
+    const result = await sql`
+      DELETE FROM blog_posts
+      WHERE id = ${id}
+      RETURNING id
+    `
 
-  revalidatePath("/blog")
-  revalidatePath("/admin")
+    revalidatePath("/blog")
+    revalidatePath("/admin")
 
-  return result.length > 0
+    return result.length > 0
+  } catch (error) {
+    console.error("Error deleting blog post:", error)
+    throw new Error(`Failed to delete blog post: ${error instanceof Error ? error.message : String(error)}`)
+  }
 }
 
 // Get posts by category

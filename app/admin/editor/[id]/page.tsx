@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, AlertCircle } from "lucide-react"
 import { notFound } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ function EditPost({ params }: { params: { id: string } }) {
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState("")
+  const [error, setError] = useState("")
 
   useEffect(() => {
     async function fetchPost() {
@@ -48,7 +49,7 @@ function EditPost({ params }: { params: { id: string } }) {
         }
       } catch (error) {
         console.error("Error fetching post:", error)
-        setMessage("Error loading post. Please try again.")
+        setError(`Error loading post: ${error instanceof Error ? error.message : String(error)}`)
       } finally {
         setIsLoading(false)
       }
@@ -59,23 +60,25 @@ function EditPost({ params }: { params: { id: string } }) {
 
   const handleSave = async (newStatus: "published" | "draft") => {
     if (!title) {
-      alert("Please enter a title for your post")
+      setError("Please enter a title for your post")
       return
     }
 
     if (!content) {
-      alert("Please enter content for your post")
+      setError("Please enter content for your post")
       return
     }
 
     if (!category) {
-      alert("Please select a category for your post")
+      setError("Please select a category for your post")
       return
     }
 
     if (!post) return
 
     setIsSaving(true)
+    setError("")
+    setMessage("Saving your post...")
 
     try {
       await updatePost(post.id, {
@@ -88,11 +91,15 @@ function EditPost({ params }: { params: { id: string } }) {
         status: newStatus,
       })
 
+      setMessage("Post saved successfully!")
+
       // Redirect to admin dashboard after saving
-      router.push("/admin")
+      setTimeout(() => {
+        router.push("/admin")
+      }, 1000)
     } catch (error) {
       console.error("Error saving post:", error)
-      setMessage("There was an error saving your post. Please try again.")
+      setError(`Failed to save post: ${error instanceof Error ? error.message : String(error)}`)
     } finally {
       setIsSaving(false)
     }
@@ -114,7 +121,20 @@ function EditPost({ params }: { params: { id: string } }) {
 
       <AdminHeader />
 
-      {message && <div className="mb-6 p-4 bg-blue-50 text-blue-700 rounded-md">{message}</div>}
+      {message && (
+        <div className="container mt-4">
+          <div className="mb-6 p-4 bg-blue-50 text-blue-700 rounded-md">{message}</div>
+        </div>
+      )}
+
+      {error && (
+        <div className="container mt-4">
+          <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-md flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <div>{error}</div>
+          </div>
+        </div>
+      )}
 
       <main className="flex-1 container py-8">
         <div className="flex justify-between items-center mb-8">
