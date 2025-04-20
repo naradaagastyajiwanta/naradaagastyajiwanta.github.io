@@ -1,65 +1,26 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { notFound } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { blogService, type BlogPost } from "@/lib/blog-service"
+import { getPostBySlug, getRelatedPosts } from "@/lib/actions/blog-actions"
+import { formatDate } from "@/lib/db"
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const router = useRouter()
-  const [post, setPost] = useState<BlogPost | null>(null)
-  const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchPost = () => {
-      const foundPost = blogService.getPostBySlug(params.slug)
-
-      if (foundPost) {
-        setPost(foundPost)
-
-        // Get related posts (same category, excluding current post)
-        const related = blogService
-          .getPublishedPosts()
-          .filter((p) => p.category === foundPost.category && p.id !== foundPost.id)
-          .slice(0, 2)
-
-        setRelatedPosts(related)
-      } else {
-        // Post not found, redirect to blog listing
-        router.push("/blog")
-      }
-
-      setIsLoading(false)
-    }
-
-    fetchPost()
-  }, [params.slug, router])
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
-    )
-  }
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug)
 
   if (!post) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <div className="text-xl">Post not found</div>
-        <Link href="/blog" className="mt-4 text-blue-500 hover:underline">
-          Return to blog
-        </Link>
-      </div>
-    )
+    notFound()
   }
+
+  // Get related posts
+  const relatedPosts = await getRelatedPosts(post.id, post.category)
+
+  // Format the date for display
+  const displayDate = post.created_at ? formatDate(new Date(post.created_at)) : ""
 
   return (
     <div className="flex min-h-screen flex-col relative overflow-hidden">
@@ -86,7 +47,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-8">
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
-                  {post.date}
+                  {displayDate}
                 </div>
                 <div className="flex items-center">
                   <User className="h-4 w-4 mr-1" />
@@ -96,13 +57,13 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                   <Tag className="h-4 w-4 mr-1" />
                   {post.category}
                 </div>
-                <div>{post.readTime}</div>
+                <div>{post.read_time}</div>
               </div>
             </div>
 
             <div className="mb-12 rounded-xl overflow-hidden">
               <img
-                src={post.coverImage || "/placeholder.svg"}
+                src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
                 alt={post.title}
                 className="w-full h-auto object-cover aspect-video"
               />
@@ -126,7 +87,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                     <GlassmorphicCard className="h-full transition-all group-hover:shadow-xl">
                       <div className="aspect-video overflow-hidden rounded-t-xl">
                         <img
-                          src={relatedPost.coverImage || "/placeholder.svg"}
+                          src={relatedPost.cover_image || "/placeholder.svg?height=720&width=1280"}
                           alt={relatedPost.title}
                           className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />

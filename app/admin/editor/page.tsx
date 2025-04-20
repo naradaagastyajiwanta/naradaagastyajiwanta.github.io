@@ -8,8 +8,8 @@ import { ArrowLeft, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import AdminHeader from "@/components/admin-header"
-import { blogService } from "@/lib/blog-service"
 import ProtectedRoute from "@/components/protected-route"
+import { createPost } from "@/lib/actions/blog-actions"
 
 function PostEditor() {
   const router = useRouter()
@@ -18,11 +18,11 @@ function PostEditor() {
   const [excerpt, setExcerpt] = useState("")
   const [category, setCategory] = useState("")
   const [coverImage, setCoverImage] = useState("/placeholder.svg?height=720&width=1280")
-  const [status, setStatus] = useState("draft")
+  const [status, setStatus] = useState<"published" | "draft">("draft")
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState("")
 
-  const handleSave = (newStatus: string) => {
+  const handleSave = async (newStatus: "published" | "draft") => {
     if (!title) {
       alert("Please enter a title for your post")
       return
@@ -41,22 +41,21 @@ function PostEditor() {
     setIsSaving(true)
 
     try {
-      blogService.createPost({
+      await createPost({
         title,
         content,
-        excerpt: excerpt || title,
-        coverImage,
+        excerpt: excerpt || undefined,
+        cover_image: coverImage !== "/placeholder.svg?height=720&width=1280" ? coverImage : undefined,
         author: "Jiwan",
         category,
-        status: newStatus as "published" | "draft",
-        readTime: blogService.calculateReadTime(content),
+        status: newStatus,
       })
 
       // Redirect to admin dashboard after saving
       router.push("/admin")
     } catch (error) {
       console.error("Error saving post:", error)
-      alert("There was an error saving your post. Please try again.")
+      setMessage("There was an error saving your post. Please try again.")
     } finally {
       setIsSaving(false)
     }

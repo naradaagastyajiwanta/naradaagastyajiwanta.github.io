@@ -4,30 +4,24 @@ import Link from "next/link"
 import { Calendar } from "lucide-react"
 import { motion } from "framer-motion"
 import { GlassmorphicCard } from "./ui-elements"
-
-interface BlogPost {
-  id: string
-  title: string
-  excerpt: string
-  coverImage: string
-  date: string
-  author: string
-  category: string
-  slug: string
-}
+import { formatDate } from "@/lib/db"
+import type { BlogPost } from "@/lib/actions/blog-actions"
 
 interface BlogPostCardProps {
   post: BlogPost
 }
 
 export default function BlogPostCard({ post }: BlogPostCardProps) {
+  // Format the date for display
+  const displayDate = post.created_at ? formatDate(new Date(post.created_at)) : ""
+
   return (
     <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
       <Link href={`/blog/${post.slug}`} className="group block">
         <GlassmorphicCard className="h-full overflow-hidden transition-all group-hover:shadow-xl">
           <div className="aspect-video overflow-hidden">
             <motion.img
-              src={post.coverImage || "/placeholder.svg"}
+              src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
               alt={post.title}
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.05 }}
@@ -51,7 +45,7 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
                 transition={{ delay: 0.2 }}
               >
                 <Calendar className="h-3 w-3 mr-1" />
-                {post.date}
+                {displayDate}
               </motion.div>
             </div>
             <motion.h3

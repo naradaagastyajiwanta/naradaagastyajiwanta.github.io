@@ -11,7 +11,6 @@ import ShortVideoCard from "@/components/short-video-card"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { blogService, type BlogPost } from "@/lib/blog-service"
 import ScrollAnimation from "@/components/scroll-animation"
 import AnimatedText from "@/components/animated-text"
 import Parallax from "@/components/parallax"
@@ -19,6 +18,8 @@ import AnimatedCard from "@/components/animated-card"
 import { fadeUp, staggerContainer, slideInLeft, slideInRight } from "@/lib/animation"
 import { useLanguage } from "@/contexts/language-context"
 import { translations } from "@/lib/translations"
+import { getLatestPosts } from "@/lib/actions/blog-actions"
+import type { BlogPost } from "@/lib/actions/blog-actions"
 
 export default function Home() {
   const { language } = useLanguage()
@@ -33,8 +34,16 @@ export default function Home() {
 
   // Get the latest 3 published posts
   useEffect(() => {
-    const posts = blogService.getPublishedPosts().slice(0, 3)
-    setLatestPosts(posts)
+    async function fetchPosts() {
+      try {
+        const posts = await getLatestPosts(3)
+        setLatestPosts(posts)
+      } catch (error) {
+        console.error("Error fetching latest posts:", error)
+      }
+    }
+
+    fetchPosts()
 
     // Set loaded state after a small delay to trigger animations
     const timer = setTimeout(() => setIsLoaded(true), 100)
@@ -373,7 +382,7 @@ export default function Home() {
                     <AnimatedCard delay={index * 0.1}>
                       <div className="aspect-video overflow-hidden">
                         <motion.img
-                          src={post.coverImage || "/placeholder.svg?height=720&width=1280"}
+                          src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
                           alt={post.title}
                           className="w-full h-full object-cover"
                           whileHover={{ scale: 1.05 }}

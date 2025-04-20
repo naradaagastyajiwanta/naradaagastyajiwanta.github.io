@@ -4,12 +4,14 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Save } from "lucide-react"
+import { notFound } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import AdminHeader from "@/components/admin-header"
-import { blogService, type BlogPost } from "@/lib/blog-service"
 import ProtectedRoute from "@/components/protected-route"
+import { getPostById, updatePost } from "@/lib/actions/blog-actions"
+import type { BlogPost } from "@/lib/actions/blog-actions"
 
 function EditPost({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -25,27 +27,37 @@ function EditPost({ params }: { params: { id: string } }) {
   const [message, setMessage] = useState("")
 
   useEffect(() => {
-    const fetchPost = () => {
-      const foundPost = blogService.getPostById(params.id)
-      if (foundPost) {
-        setPost(foundPost)
-        setTitle(foundPost.title)
-        setContent(foundPost.content)
-        setExcerpt(foundPost.excerpt)
-        setCategory(foundPost.category)
-        setCoverImage(foundPost.coverImage)
-        setStatus(foundPost.status)
-      } else {
-        alert("Post not found")
-        router.push("/admin")
+    async function fetchPost() {
+      try {
+        const postId = Number.parseInt(params.id, 10)
+        if (isNaN(postId)) {
+          notFound()
+        }
+
+        const foundPost = await getPostById(postId)
+        if (foundPost) {
+          setPost(foundPost)
+          setTitle(foundPost.title)
+          setContent(foundPost.content)
+          setExcerpt(foundPost.excerpt)
+          setCategory(foundPost.category)
+          setCoverImage(foundPost.cover_image)
+          setStatus(foundPost.status)
+        } else {
+          notFound()
+        }
+      } catch (error) {
+        console.error("Error fetching post:", error)
+        setMessage("Error loading post. Please try again.")
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }
 
     fetchPost()
-  }, [params.id, router])
+  }, [params.id])
 
-  const handleSave = (newStatus: "published" | "draft") => {
+  const handleSave = async (newStatus: "published" | "draft") => {
     if (!title) {
       alert("Please enter a title for your post")
       return
@@ -61,26 +73,26 @@ function EditPost({ params }: { params: { id: string } }) {
       return
     }
 
+    if (!post) return
+
     setIsSaving(true)
 
     try {
-      if (post) {
-        blogService.updatePost(post.id, {
-          title,
-          content,
-          excerpt,
-          coverImage,
-          category,
-          status: newStatus,
-          readTime: blogService.calculateReadTime(content),
-        })
-      }
+      await updatePost(post.id, {
+        title,
+        content,
+        excerpt,
+        cover_image: coverImage,
+        author: post.author,
+        category,
+        status: newStatus,
+      })
 
       // Redirect to admin dashboard after saving
       router.push("/admin")
     } catch (error) {
       console.error("Error saving post:", error)
-      alert("There was an error saving your post. Please try again.")
+      setMessage("There was an error saving your post. Please try again.")
     } finally {
       setIsSaving(false)
     }
