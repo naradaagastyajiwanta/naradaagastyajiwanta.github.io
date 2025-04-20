@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
+import FallbackImage from "@/components/fallback-image"
 import { getPostBySlug, getRelatedPosts } from "@/lib/actions/blog-actions"
 import { formatDate } from "@/lib/db"
 
@@ -62,9 +63,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </div>
 
             <div className="mb-12 rounded-xl overflow-hidden">
-              <img
+              <FallbackImage
                 src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
                 alt={post.title}
+                fallbackSrc="/placeholder.svg?height=720&width=1280"
                 className="w-full h-auto object-cover aspect-video"
               />
             </div>
@@ -86,9 +88,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`} className="group">
                     <GlassmorphicCard className="h-full transition-all group-hover:shadow-xl">
                       <div className="aspect-video overflow-hidden rounded-t-xl">
-                        <img
+                        <FallbackImage
                           src={relatedPost.cover_image || "/placeholder.svg?height=720&width=1280"}
                           alt={relatedPost.title}
+                          fallbackSrc="/placeholder.svg?height=720&width=1280"
                           className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />
                       </div>

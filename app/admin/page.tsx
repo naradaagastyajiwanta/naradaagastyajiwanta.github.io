@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import AdminHeader from "@/components/admin-header"
 import ProtectedRoute from "@/components/protected-route"
+import FallbackImage from "@/components/fallback-image"
 import { getAllPosts, deletePost } from "@/lib/actions/blog-actions"
 
 function AdminDashboard() {
@@ -92,13 +93,11 @@ async function BlogPostsList() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 mr-3">
-                        <img
+                        <FallbackImage
                           className="h-10 w-10 rounded object-cover"
                           src={post.cover_image || "/placeholder.svg?height=40&width=40"}
                           alt=""
-                          onError={(e) => {
-                            e.currentTarget.src = "/placeholder.svg?height=40&width=40"
-                          }}
+                          fallbackSrc="/placeholder.svg?height=40&width=40"
                         />
                       </div>
                       <div className="font-medium text-gray-900 truncate max-w-xs">{post.title}</div>

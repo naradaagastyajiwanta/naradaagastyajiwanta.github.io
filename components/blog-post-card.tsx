@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Calendar } from "lucide-react"
 import { motion } from "framer-motion"
 import { GlassmorphicCard } from "./ui-elements"
+import FallbackImage from "./fallback-image"
 import { formatDate } from "@/lib/db"
 import type { BlogPost } from "@/lib/actions/blog-actions"
 
@@ -20,13 +21,14 @@ export default function BlogPostCard({ post }: BlogPostCardProps) {
       <Link href={`/blog/${post.slug}`} className="group block">
         <GlassmorphicCard className="h-full overflow-hidden transition-all group-hover:shadow-xl">
           <div className="aspect-video overflow-hidden">
-            <motion.img
-              src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
-              alt={post.title}
-              className="w-full h-full object-cover"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.5 }}
-            />
+            <motion.div className="w-full h-full">
+              <FallbackImage
+                src={post.cover_image || "/placeholder.svg?height=720&width=1280"}
+                alt={post.title}
+                fallbackSrc="/placeholder.svg?height=720&width=1280"
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
           </div>
           <div className="p-6">
             <div className="flex items-center justify-between mb-3">
