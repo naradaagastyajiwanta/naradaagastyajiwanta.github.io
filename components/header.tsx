@@ -3,8 +3,14 @@
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import LanguageSwitcher from "@/components/language-switcher"
+import { useLanguage } from "@/contexts/language-context"
+import { translations } from "@/lib/translations"
 
 export default function Header() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <motion.header
       className="fixed top-0 z-50 w-full border-b border-blue-400/50 bg-blue-500/90 backdrop-blur-md shadow-sm"
@@ -35,11 +41,11 @@ export default function Header() {
         </motion.div>
         <nav className="hidden md:flex gap-6">
           {[
-            { href: "/#work", label: "Work" },
-            { href: "/#shorts", label: "Shorts" },
-            { href: "/#about", label: "About" },
-            { href: "/blog", label: "Blog" },
-            { href: "/#contact", label: "Contact" },
+            { href: "/#work", label: t.work },
+            { href: "/#shorts", label: t.shorts },
+            { href: "/#about", label: t.about },
+            { href: "/blog", label: t.blog },
+            { href: "/#contact", label: t.contact },
           ].map((item, index) => (
             <motion.div
               key={item.href}
@@ -53,6 +59,10 @@ export default function Header() {
               </Link>
             </motion.div>
           ))}
+
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+            <LanguageSwitcher />
+          </motion.div>
         </nav>
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -67,7 +77,7 @@ export default function Header() {
               document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
             }}
           >
-            Let's Talk
+            {t.letsTalk}
           </Button>
         </motion.div>
         <motion.div

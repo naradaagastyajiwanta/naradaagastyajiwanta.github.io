@@ -17,8 +17,13 @@ import AnimatedText from "@/components/animated-text"
 import Parallax from "@/components/parallax"
 import AnimatedCard from "@/components/animated-card"
 import { fadeUp, staggerContainer, slideInLeft, slideInRight } from "@/lib/animation"
+import { useLanguage } from "@/contexts/language-context"
+import { translations } from "@/lib/translations"
 
 export default function Home() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
   const heroRef = useRef<HTMLDivElement>(null)
@@ -60,12 +65,12 @@ export default function Home() {
           >
             <motion.div className="space-y-2" variants={fadeUp}>
               <AnimatedText
-                text="Video Editor & Storyteller"
+                text={t.heroTitle}
                 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl"
                 type="words"
               />
               <motion.p className="max-w-[600px] text-gray-500 md:text-xl" variants={fadeUp}>
-                Video editor from Indonesia specializing in YouTube videos, shorts, VSL, company profiles and many more.
+                {t.heroDescription}
               </motion.p>
             </motion.div>
             <motion.div className="flex flex-col gap-2 min-[400px]:flex-row" variants={fadeUp}>
@@ -76,7 +81,7 @@ export default function Home() {
                     document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })
                   }}
                 >
-                  View My Work
+                  {t.viewMyWork}
                   <motion.span
                     animate={{ x: [0, 5, 0] }}
                     transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
@@ -92,7 +97,7 @@ export default function Home() {
                     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
                   }}
                 >
-                  Contact Me
+                  {t.contactMe}
                 </Button>
               </motion.div>
             </motion.div>
@@ -137,7 +142,7 @@ export default function Home() {
           <ScrollAnimation variants={fadeUp}>
             <div className="mb-12 text-center">
               <AnimatedText
-                text="Featured Work"
+                text={t.featuredWorkTitle}
                 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
                 delay={0.1}
               />
@@ -147,7 +152,7 @@ export default function Home() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                A selection of my best video editing projects across various genres and styles.
+                {t.featuredWorkDescription}
               </motion.p>
             </div>
           </ScrollAnimation>
@@ -162,44 +167,44 @@ export default function Home() {
             {[
               {
                 title: "Dawnna - Sales Strategist & Coach",
-                category: "Corporate",
+                category: language === "id" ? t.corporate : "Corporate",
                 thumbnail: `https://img.youtube.com/vi/Pes8IAkVLpQ/maxresdefault.jpg`,
-                duration: "Trial Edit",
+                duration: language === "id" ? t.trialEdit : "Trial Edit",
                 videoId: "Pes8IAkVLpQ",
               },
               {
                 title: "Yoav - YouTube Video Edit",
-                category: "Showcase",
+                category: language === "id" ? t.showcase : "Showcase",
                 thumbnail: `https://img.youtube.com/vi/ifXYgtE3zj0/maxresdefault.jpg`,
-                duration: "Showcase",
+                duration: language === "id" ? t.showcase : "Showcase",
                 videoId: "ifXYgtE3zj0",
               },
               {
                 title: "Wonderfulwebsite - VSL Edit",
                 category: "VSL",
                 thumbnail: `https://img.youtube.com/vi/gUFpvhAcuL8/maxresdefault.jpg`,
-                duration: "Showcase",
+                duration: language === "id" ? t.showcase : "Showcase",
                 videoId: "gUFpvhAcuL8",
               },
               {
                 title: "YouTube Video - Trial Edit",
-                category: "Trial Edit",
+                category: language === "id" ? t.trialEdit : "Trial Edit",
                 thumbnail: `https://img.youtube.com/vi/X2QYNhI-h6U/maxresdefault.jpg`,
-                duration: "Showcase",
+                duration: language === "id" ? t.showcase : "Showcase",
                 videoId: "X2QYNhI-h6U",
               },
               {
                 title: "Case Value - Company Profile",
-                category: "Company Profile",
+                category: language === "id" ? t.companyProfile : "Company Profile",
                 thumbnail: `https://img.youtube.com/vi/7HeahSXxBoI/maxresdefault.jpg`,
-                duration: "Showcase",
+                duration: language === "id" ? t.showcase : "Showcase",
                 videoId: "7HeahSXxBoI",
               },
               {
                 title: "QuantaInvest - Faceless Youtube Video Edit",
-                category: "Showcase",
+                category: language === "id" ? t.showcase : "Showcase",
                 thumbnail: `https://img.youtube.com/vi/eIqipwf-V-I/maxresdefault.jpg`,
-                duration: "Showcase",
+                duration: language === "id" ? t.showcase : "Showcase",
                 videoId: "eIqipwf-V-I",
               },
             ].map((video, index) => (
@@ -219,7 +224,7 @@ export default function Home() {
             <div className="mt-12 text-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-50">
-                  View All Projects
+                  {t.viewAllProjects}
                   <motion.span
                     animate={{ x: [0, 5, 0] }}
                     transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
@@ -239,7 +244,7 @@ export default function Home() {
           <ScrollAnimation variants={fadeUp}>
             <div className="mb-12 text-center">
               <AnimatedText
-                text="Short-Form Videos"
+                text={t.shortVideosTitle}
                 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
                 delay={0.1}
               />
@@ -249,7 +254,7 @@ export default function Home() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                Engaging short-form content for social media platforms like TikTok, Instagram Reels, and YouTube Shorts.
+                {t.shortVideosDescription}
               </motion.p>
             </div>
           </ScrollAnimation>
@@ -264,41 +269,41 @@ export default function Home() {
             {[
               {
                 title: "Visual Effects Showcase",
-                category: "Short",
+                category: language === "id" ? t.short : "Short",
                 thumbnail: `https://img.youtube.com/vi/4VLSUlM8UvI/maxresdefault.jpg`,
-                duration: "Short",
+                duration: language === "id" ? t.short : "Short",
                 videoId: "4VLSUlM8UvI",
               },
               {
                 title: "Short Video Edit",
-                category: "Short",
+                category: language === "id" ? t.short : "Short",
                 thumbnail: `https://img.youtube.com/vi/RaW2M4Y8k20/maxresdefault.jpg`,
-                duration: "Short",
+                duration: language === "id" ? t.short : "Short",
                 videoId: "RaW2M4Y8k20",
               },
               {
                 title: "Short Video Edit",
-                category: "Short",
+                category: language === "id" ? t.short : "Short",
                 thumbnail: `https://img.youtube.com/vi/Xus_I2oUI-A/maxresdefault.jpg`,
-                duration: "Short",
+                duration: language === "id" ? t.short : "Short",
                 videoId: "Xus_I2oUI-A",
               },
               {
                 title: "One Earth School",
-                category: "Short Video Edit",
+                category: language === "id" ? t.short : "Short Video Edit",
                 thumbnail: `https://img.youtube.com/vi/Wq-XnQqgNCs/maxresdefault.jpg`,
-                duration: "Short",
+                duration: language === "id" ? t.short : "Short",
                 videoId: "Wq-XnQqgNCs",
               },
               {
                 title: "Food Review",
-                category: "Short",
+                category: language === "id" ? t.short : "Short",
                 thumbnail: "/placeholder.svg?height=1920&width=1080",
                 duration: "0:20",
               },
               {
                 title: "Tech Unboxing",
-                category: "Short",
+                category: language === "id" ? t.short : "Short",
                 thumbnail: "/placeholder.svg?height=1920&width=1080",
                 duration: "0:60",
               },
@@ -319,7 +324,7 @@ export default function Home() {
             <div className="mt-12 text-center">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button variant="outline" className="border-blue-500 text-blue-500 hover:bg-blue-50">
-                  View All Shorts
+                  {t.viewAllShorts}
                   <motion.span
                     animate={{ x: [0, 5, 0] }}
                     transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
@@ -339,7 +344,7 @@ export default function Home() {
           <ScrollAnimation variants={fadeUp}>
             <div className="mb-12 text-center">
               <AnimatedText
-                text="Latest Articles"
+                text={t.latestArticlesTitle}
                 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
                 delay={0.1}
               />
@@ -349,7 +354,7 @@ export default function Home() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                Insights, tips, and tutorials on video editing techniques and industry trends
+                {t.latestArticlesDescription}
               </motion.p>
             </div>
           </ScrollAnimation>
@@ -440,7 +445,7 @@ export default function Home() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Link href="/blog">
                   <Button className="bg-blue-500 hover:bg-blue-600">
-                    View All Articles
+                    {t.viewAllArticles}
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
                       transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5, ease: "easeInOut" }}
@@ -478,7 +483,7 @@ export default function Home() {
               <div className="flex flex-col justify-center space-y-4">
                 <div>
                   <AnimatedText
-                    text="About Me"
+                    text={t.aboutMeTitle}
                     className="text-3xl font-bold tracking-tighter sm:text-4xl"
                     delay={0.1}
                   />
@@ -488,9 +493,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    I'm Jiwan, a passionate video editor from Indonesia with experience crafting compelling visual
-                    stories. My approach combines technical precision with creative vision to deliver impactful content
-                    that resonates with audiences.
+                    {t.aboutMeDescription1}
                   </motion.p>
                   <motion.p
                     className="mt-4 text-gray-500"
@@ -498,9 +501,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    My expertise spans YouTube videos, shorts, Video Sales Letters (VSL), company profiles, and many
-                    more formats. I specialize in finding the emotional core of each project and bringing it to life
-                    through thoughtful editing, pacing, and visual style.
+                    {t.aboutMeDescription2}
                   </motion.p>
                 </div>
                 <motion.div
@@ -510,10 +511,10 @@ export default function Home() {
                   variants={staggerContainer}
                 >
                   {[
-                    { value: "5+", label: "Years Experience" },
-                    { value: "50+", label: "Projects Completed" },
-                    { value: "5+", label: "Clients" },
-                    { value: "50+", label: "Happy Clients" },
+                    { value: "5+", label: t.yearsExperience },
+                    { value: "50+", label: t.projectsCompleted },
+                    { value: "5+", label: t.clients },
+                    { value: "50+", label: t.happyClients },
                   ].map((stat, index) => (
                     <motion.div key={index} variants={fadeUp}>
                       <GlassmorphicCard className="p-4">
@@ -543,7 +544,7 @@ export default function Home() {
             <ScrollAnimation variants={fadeUp}>
               <div className="text-center mb-12">
                 <AnimatedText
-                  text="Let's Work Together"
+                  text={t.workTogetherTitle}
                   className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl"
                   delay={0.1}
                 />
@@ -553,7 +554,7 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  Have a project in mind? I'd love to hear about it. Get in touch and let's create something amazing.
+                  {t.workTogetherDescription}
                 </motion.p>
               </div>
             </ScrollAnimation>
@@ -561,7 +562,7 @@ export default function Home() {
             <div className="grid gap-8 md:grid-cols-2">
               <ScrollAnimation variants={slideInLeft}>
                 <GlassmorphicCard className="p-6">
-                  <h3 className="text-xl font-semibold mb-6">Contact Information</h3>
+                  <h3 className="text-xl font-semibold mb-6">{t.contactInformation}</h3>
                   <motion.div className="space-y-4" initial="hidden" animate="visible" variants={staggerContainer}>
                     {[
                       { icon: Mail, text: "jiwanta09@gmail.com", href: "mailto:jiwanta09@gmail.com" },
@@ -615,7 +616,7 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                   >
-                    <h3 className="text-xl font-semibold mb-4">Follow Me</h3>
+                    <h3 className="text-xl font-semibold mb-4">{t.followMe}</h3>
                     <div className="flex gap-4">
                       {[
                         { icon: Instagram, href: "https://instagram.com/itisjiwan" },
@@ -664,7 +665,7 @@ export default function Home() {
 
               <ScrollAnimation variants={slideInRight}>
                 <GlassmorphicCard className="p-6">
-                  <h3 className="text-xl font-semibold mb-4">Send Me a Message</h3>
+                  <h3 className="text-xl font-semibold mb-4">{t.sendMessage}</h3>
                   <motion.form
                     action="mailto:jiwanta09@gmail.com"
                     method="post"
@@ -677,7 +678,7 @@ export default function Home() {
                     <motion.div className="grid gap-4" variants={fadeUp}>
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                          Name
+                          {t.name}
                         </label>
                         <motion.input
                           type="text"
@@ -690,7 +691,7 @@ export default function Home() {
                       </div>
                       <div>
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                          Email
+                          {t.email}
                         </label>
                         <motion.input
                           type="email"
@@ -704,7 +705,7 @@ export default function Home() {
                     </motion.div>
                     <motion.div variants={fadeUp}>
                       <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                        Message
+                        {t.message}
                       </label>
                       <motion.textarea
                         id="message"
@@ -718,7 +719,7 @@ export default function Home() {
                     <motion.div variants={fadeUp}>
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                         <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 mb-2">
-                          Send Message
+                          {t.sendMessageButton}
                         </Button>
                       </motion.div>
                       <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
@@ -733,7 +734,7 @@ export default function Home() {
                             className="w-full bg-green-500 hover:bg-green-600 flex items-center justify-center gap-2"
                           >
                             <MessageSquare className="h-5 w-5" />
-                            Contact via WhatsApp
+                            {t.contactViaWhatsApp}
                           </Button>
                         </a>
                       </motion.div>

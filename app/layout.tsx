@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import AnimatedLayout from "@/components/animated-layout"
+import { LanguageProvider } from "@/contexts/language-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -20,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.className} pt-16`}>
-        <AnimatedLayout>{children}</AnimatedLayout>
+        <LanguageProvider>
+          <AnimatedLayout>{children}</AnimatedLayout>
+        </LanguageProvider>
       </body>
     </html>
   )

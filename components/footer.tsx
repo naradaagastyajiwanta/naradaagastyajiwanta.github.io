@@ -2,8 +2,13 @@
 
 import { Instagram, Youtube, MessageSquare } from "lucide-react"
 import { motion } from "framer-motion"
+import { useLanguage } from "@/contexts/language-context"
+import { translations } from "@/lib/translations"
 
 export default function Footer() {
+  const { language } = useLanguage()
+  const t = translations[language]
+
   return (
     <motion.footer
       className="border-t py-6 md:py-8 bg-white/80 backdrop-blur-md"
@@ -18,7 +23,7 @@ export default function Footer() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="text-sm text-gray-500">© 2025 Jiwan. All rights reserved.</div>
+          <div className="text-sm text-gray-500">© 2025 Jiwan. {t.allRightsReserved}</div>
         </motion.div>
         <motion.div
           className="flex gap-4"
