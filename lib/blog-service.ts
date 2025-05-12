@@ -394,3 +394,7 @@ class BlogService {
 
 // Export a singleton instance
 export const blogService = new BlogService()
+
+export const getAllPosts = () => {
+  return blogService.getAllPosts()
+}

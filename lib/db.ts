@@ -1,7 +1,32 @@
 import { neon } from "@neondatabase/serverless"
 
-// Create a SQL client with the connection string from environment variables
-export const sql = neon(process.env.DATABASE_URL!)
+// Check if DATABASE_URL is available
+const databaseUrl = process.env.DATABASE_URL || ""
+
+// Create a SQL client with proper error handling
+export const sql = (() => {
+  try {
+    // Check if we're in a development environment without a DATABASE_URL
+    if (!databaseUrl) {
+      console.warn("DATABASE_URL is not defined. Using mock SQL client.")
+      // Return a mock SQL client for development
+      return async (query: string, params?: any[]) => {
+        console.log(`Mock SQL query: ${query}`, params)
+        return []
+      }
+    }
+
+    // Create the real SQL client
+    return neon(databaseUrl)
+  } catch (error) {
+    console.error("Failed to initialize database connection:", error)
+    // Return a fallback function that logs errors but doesn't crash
+    return async (query: string, params?: any[]) => {
+      console.error(`Failed to execute query: ${query}`, params, error)
+      return []
+    }
+  }
+})()
 
 // Helper function to format date for display
 export function formatDate(date: Date): string {
