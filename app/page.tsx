@@ -18,10 +18,35 @@ import AnimatedCard from "@/components/animated-card"
 import { fadeUp, staggerContainer, slideInLeft, slideInRight } from "@/lib/animation"
 import { useLanguage } from "@/contexts/language-context"
 import { translations } from "@/lib/translations"
-import { getLatestPosts } from "@/lib/actions/blog-actions"
 import type { BlogPost } from "@/lib/actions/blog-actions"
 
+// Tambahkan ErrorBoundary untuk menangkap error
+import ErrorBoundary from "@/components/error-boundary"
+
 export default function Home() {
+  // Bungkus seluruh konten dengan ErrorBoundary
+  return (
+    <ErrorBoundary fallback={<ErrorFallback />}>
+      <HomeContent />
+    </ErrorBoundary>
+  )
+}
+
+// Komponen fallback untuk error
+function ErrorFallback() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
+      <h1 className="text-3xl font-bold mb-4">Oops! Something went wrong</h1>
+      <p className="text-gray-600 mb-8">We're sorry, but there was an error loading this page.</p>
+      <Button onClick={() => window.location.reload()} className="bg-blue-500 hover:bg-blue-600">
+        Try Again
+      </Button>
+    </div>
+  )
+}
+
+// Konten utama halaman home
+function HomeContent() {
   const { language } = useLanguage()
   const t = translations[language]
 
@@ -36,10 +61,17 @@ export default function Home() {
   useEffect(() => {
     async function fetchPosts() {
       try {
-        const posts = await getLatestPosts(3)
+        // Gunakan fetch API untuk mendapatkan data dari API route
+        const response = await fetch("/api/blog/latest?limit=3")
+        if (!response.ok) {
+          throw new Error("Failed to fetch posts")
+        }
+        const posts = await response.json()
         setLatestPosts(posts)
       } catch (error) {
         console.error("Error fetching latest posts:", error)
+        // Jangan crash jika gagal mengambil post
+        setLatestPosts([])
       }
     }
 
