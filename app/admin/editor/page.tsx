@@ -10,6 +10,7 @@ import { BlueGradientCircle, GlassmorphicCard } from "@/components/ui-elements"
 import AdminHeader from "@/components/admin-header"
 import ProtectedRoute from "@/components/protected-route"
 import { createPost } from "@/lib/actions/blog-actions"
+import RichTextEditor from "@/components/rich-text-editor"
 
 function PostEditor() {
   const router = useRouter()
@@ -129,57 +130,7 @@ function PostEditor() {
                 onChange={(e) => setTitle(e.target.value)}
               />
 
-              <div className="border rounded-lg overflow-hidden mb-4">
-                <div className="bg-gray-50 border-b px-4 py-2 flex items-center">
-                  <button className="p-2 hover:bg-gray-100 rounded mr-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
-                    </svg>
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded mr-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 010 2h6a1 1 0 100-2H7z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded mr-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded mr-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path
-                        fillRule="evenodd"
-                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a3 3 0 00-3-3 3 3 0 00-3 3v4a3 3 0 006 0V7a1 1 0 112 0v4a5 5 0 01-10 0V7a5 5 0 0110 0v1h-2V7a3 3 0 00-3-3z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                <textarea
-                  className="w-full p-4 min-h-[400px] focus:outline-none"
-                  placeholder="Write your post content here..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-              </div>
+              <RichTextEditor content={content} onChange={setContent} minHeight="400px" />
             </GlassmorphicCard>
           </div>
 
