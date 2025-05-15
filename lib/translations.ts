@@ -65,6 +65,12 @@ export const translations = {
     trialEdit: "Trial Edit",
     companyProfile: "Company Profile",
     short: "Short",
+
+    // 404 Page
+    notFoundTitle: "Oops! Scene Not Found",
+    notFoundDescription: "Looks like this scene was left on the cutting room floor.",
+    backToHome: "Back to Home",
+    tryAgain: "Try Again",
   },
   id: {
     // Header
@@ -132,6 +138,12 @@ export const translations = {
     trialEdit: "Edit Percobaan",
     companyProfile: "Profil Perusahaan",
     short: "Pendek",
+
+    // 404 Page
+    notFoundTitle: "Oops! Adegan Tidak Ditemukan",
+    notFoundDescription: "Sepertinya adegan ini tertinggal di ruang editing.",
+    backToHome: "Kembali ke Beranda",
+    tryAgain: "Coba Lagi",
   },
 }
 

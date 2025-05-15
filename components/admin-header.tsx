@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Home, FileText, Settings, LogOut, HardDrive } from "lucide-react"
+import { Home, FileText, Settings, LogOut, HardDrive, Sparkles } from "lucide-react"
 import { authService } from "@/lib/auth-service"
 
 export default function AdminHeader() {
@@ -34,6 +34,13 @@ export default function AdminHeader() {
           >
             <HardDrive className="h-4 w-4 mr-1" />
             Storage
+          </Link>
+          <Link
+            href="/admin/ai"
+            className="text-sm font-medium flex items-center hover:text-blue-500 transition-colors"
+          >
+            <Sparkles className="h-4 w-4 mr-1" />
+            AI Tools
           </Link>
           <Link
             href="/admin/settings"

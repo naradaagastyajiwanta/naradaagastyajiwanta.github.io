@@ -5,6 +5,7 @@ import "./globals.css"
 import AnimatedLayout from "@/components/animated-layout"
 import { LanguageProvider } from "@/contexts/language-context"
 import Script from "next/script"
+import AIChatbot from "@/components/ai-chatbot"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={`${inter.className} pt-16`}>
         <LanguageProvider>
           <AnimatedLayout>{children}</AnimatedLayout>
+          <AIChatbot />
         </LanguageProvider>
         {/* Add safe ethereum initialization script */}
         <Script id="ethereum-check" strategy="afterInteractive">
