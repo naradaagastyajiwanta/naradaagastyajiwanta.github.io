@@ -7,6 +7,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { CardContent } from "@/components/ui/card"
 import { GlassmorphicCard } from "./ui-elements"
+import HoverImageEffect from "./hover-image-effect"
 
 interface VideoCardProps {
   title: string
@@ -45,7 +46,7 @@ export default function VideoCard({ title, category, thumbnail, duration, videoI
               allowFullScreen
             ></iframe>
           ) : (
-            <>
+            <HoverImageEffect>
               <motion.div
                 className="absolute inset-0 bg-black/20 flex items-center justify-center"
                 initial={{ opacity: 0 }}
@@ -73,7 +74,7 @@ export default function VideoCard({ title, category, thumbnail, duration, videoI
               <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 text-xs text-white rounded">
                 {duration}
               </div>
-            </>
+            </HoverImageEffect>
           )}
         </div>
         <CardContent className="p-4 bg-white/80">
